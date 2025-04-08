@@ -1,11 +1,26 @@
 $serverNodeName = $env:computername
 $connectionString = $args[0]
-$masterKey = $args[1]
+$username = $args[1]
+$email = $args[2]
+$password = $args[3]
+$licenseKeySafe = $args[4]
 
-if(!$masterKey)
-{
-    $masterKey = Get-Content -Path "C:\Octopus\Artifacts\MasterKey.txt" 
-}
+$LicenseKey = $LicenseKeySafe.replace('|', '"')
+
+$licenseKeyBytes = [Text.Encoding]::Unicode.GetBytes($LicenseKey)
+$licenseKeyBase64 = [System.Convert]::ToBase64String($licenseKeyBytes)
+
+$LogFileLocation = "C:\log.txt"
+
+# Log Args to File
+
+"Beginning Setup Octopus Script" | Out-File -FilePath $LogFileLocation -append
+
+(-join("Server Node Name = ", $serverNodeName)) | Out-File -FilePath $LogFileLocation -append
+(-join("Connection String = ", $connectionString)) | Out-File -FilePath $LogFileLocation -append
+(-join("Username = ", $username)) | Out-File -FilePath $LogFileLocation -append
+(-join("License Key (Safe) = ", $licenseKeySafe)) | Out-File -FilePath $LogFileLocation -append
+(-join("License Key = ", $LicenseKey)) | Out-File -FilePath $LogFileLocation -append
 
 # Create Instance
 
@@ -25,14 +40,11 @@ Start-Process "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" -Argu
 # Configure Database
 
 Write-Output "Configuring Database"
-Write-Output (-join("Master Key = ", $masterKey))
 Write-Output (-join("Connection String = ", $connectionString))
 
 $octoargs = @("database",
           "--instance",
           '"OctopusServer"',
-          "--masterKey",
-          (-join('"', $masterKey, '"')),
           "--connectionString",
           (-join('"', $connectionString, '"')),
           "--create")
@@ -51,7 +63,11 @@ $octoargs = @("configure",
           "--webListenPrefixes",
           '"http://localhost:80/"',
           "--commsListenPort",
-          '"10943"')
+          '"10943"',
+          "--usernamePasswordIsEnabled",
+          "True",
+          "--activeDirectoryIsEnabled",
+          "False")
 
 Start-Process "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" -ArgumentList $octoargs -Wait -NoNewWindow
 
@@ -63,6 +79,39 @@ $octoargs = @("service",
           "--instance",
           '"OctopusServer"',
           "--stop")
+
+Start-Process "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" -ArgumentList $octoargs -Wait -NoNewWindow
+
+# Set Credentials
+
+Write-Output "Setting Credentials"
+Write-Output (-join("Username = ", $username))
+Write-Output (-join("Email = ", $email))
+Write-Output (-join("Password = ", $password))
+
+$octoargs = @("admin",
+          "--instance",
+          '"OctopusServer"',
+          "--username",
+          (-join('"', $username, '"')),
+          "--email",
+          (-join('"', $email, '"')),
+          "--password",
+          (-join('"', $password, '"')))
+
+Start-Process "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" -ArgumentList $octoargs -Wait -NoNewWindow
+
+# License
+
+Write-Output "Adding License"
+Write-Output (-join("License (String) = ", $licenseKey))
+Write-Output (-join("License (Base64) = ", $licenseKeyBase64))
+
+$octoargs = @("license",
+          "--instance",
+          '"OctopusServer"',
+          "--licenseBase64",
+          (-join('"', $licenseKeyBase64, '"')))
 
 Start-Process "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" -ArgumentList $octoargs -Wait -NoNewWindow
 
