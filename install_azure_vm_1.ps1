@@ -26,7 +26,7 @@ $url = "https://raw.githubusercontent.com/SarasaGunawardhana/Octopus-Deploy-HA-S
 
 (-join("Getting File from = ", $url)) | Out-File -FilePath $LogFileLocation -append
 
-$outpath = "$PSScriptRoot\02_installoctopus.ps1"
+$outpath = "$PSScriptRoot\install_octopus.ps1"
 
 (-join("Saving File to = ", $outpath)) | Out-File -FilePath $LogFileLocation -append
 
@@ -45,7 +45,7 @@ $url = "https://raw.githubusercontent.com/SarasaGunawardhana/Octopus-Deploy-HA-S
 
 (-join("Getting File from = ", $url)) | Out-File -FilePath $LogFileLocation -append
 
-$outpath = "$PSScriptRoot\03_setupOctopus_VM1.ps1"
+$outpath = "$PSScriptRoot\setup_octopus.ps1"
 
 (-join("Saving File to = ", $outpath)) | Out-File -FilePath $LogFileLocation -append
 
@@ -62,3 +62,4 @@ New-NetFirewallRule -DisplayName "Allow Outbound Port 80" -Direction Outbound -L
 New-NetFirewallRule -DisplayName "Allow Outbound Port 443" -Direction Outbound -LocalPort 80 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Allow Inbound Port 80" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Allow Inbound Port 443" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
+
