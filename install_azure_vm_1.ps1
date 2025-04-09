@@ -1,10 +1,10 @@
 # Get Args
 
-$ConnectionString = $args[3]
-$UserName = $args[4]
-$Email = $args[5]
-$Password = $args[6]
-$LicenseKey = $args[7]
+$ConnectionString = $args[0]
+$UserName = $args[1]
+$Email = $args[2]
+$Password = $args[3]
+$LicenseKey = $args[4]
 
 $LogFileLocation = "C:\log.txt"
 
