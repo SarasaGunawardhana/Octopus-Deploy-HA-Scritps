@@ -1,4 +1,4 @@
-# $url = "https://download.octopusdeploy.com/octopus/Octopus.2025.1.10012-x64.msi"
+$url = "https://download.octopusdeploy.com/octopus/Octopus.2025.1.10012-x64.msi"
 # $url = "https://octopus.com/downloads/OctopusServer/thanks?releaseVersion=2025.1.10012&filePlatform=WindowsX64"
 
 $outpath = "$PSScriptRoot\octopusdeploy.msi"
