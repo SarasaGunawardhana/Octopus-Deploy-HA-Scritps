@@ -1,5 +1,5 @@
-$url = "https://download.octopusdeploy.com/octopus/Octopus.2021.3.12155-x64.msi"
-# $url = "https://octopus.com/downloads/OctopusServer/thanks?releaseVersion=2025.1.10012&filePlatform=WindowsX64"
+# $url = "https://download.octopusdeploy.com/octopus/Octopus.2021.3.12155-x64.msi"
+$url = "https://octopus.com/downloads/OctopusServer/thanks?releaseVersion=2025.1.10012&filePlatform=WindowsX64"
 
 $outpath = "$PSScriptRoot\octopusdeploy.msi"
 $ProgressPreference = 'SilentlyContinue'
