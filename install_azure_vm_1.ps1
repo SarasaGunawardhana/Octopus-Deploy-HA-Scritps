@@ -63,3 +63,14 @@ New-NetFirewallRule -DisplayName "Allow Outbound Port 443" -Direction Outbound -
 New-NetFirewallRule -DisplayName "Allow Inbound Port 80" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
 New-NetFirewallRule -DisplayName "Allow Inbound Port 443" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
 
+
+$octoargs = @("show-master-key")
+
+Start-Process "C:\Program Files\Octopus Deploy\Octopus\Octopus.Server.exe" -ArgumentList $octoargs -Wait -NoNewWindow -RedirectStandardOutput "C:\Octopus\Artifacts\MasterKey.txt"
+
+$masterKey = Get-Content -Path "C:\Octopus\Artifacts\MasterKey.txt" 
+
+Write-Output $masterKey
+
+#Remove-Item "$PSScriptRoot\MasterKey.txt"
+
