@@ -6,6 +6,10 @@ $Email = $args[2]
 $Password = $args[3]
 $LicenseKey = $args[4]
 
+$storageName=$args[5]
+$storageShare=$args[6]
+$storagePass=$args[7]
+
 $LicenseKey = $LicenseKey.replace('|', '"')
 
 $LogFileLocation = "C:\log.txt"
@@ -19,6 +23,35 @@ $LogFileLocation = "C:\log.txt"
 (-join("Email = ", $Email)) | Out-File -FilePath $LogFileLocation -append
 (-join("Password = ", $Password)) | Out-File -FilePath $LogFileLocation -append
 (-join("License Key = ", $LicenseKey)) | Out-File -FilePath $LogFileLocation -append
+
+# Connect SMB file share
+
+"Connect SMB file share" | Out-File -FilePath $LogFileLocation -append
+
+
+(-join("Storage Account Name = ", $StorageName)) | Out-File -FilePath $LogFileLocation -append
+(-join("Account Key = ", $storagePass)) | Out-File -FilePath $LogFileLocation -append
+(-join("Storage File Share Name = ", $storageShare)) | Out-File -FilePath $LogFileLocation -append
+(-join("Storage File Share Directory = ", $storageDirectory)) | Out-File -FilePath $LogFileLocation -append
+
+# Add the Authentication for the symbolic links. You can get this from the Azure Portal.
+
+try {
+    cmdkey /add:$storageName.file.core.windows.net /user:Azure\$storageName /pass:$storagePass
+}
+catch {
+    (-join("Error Adding Authentication = ", $_.ScriptStackTrace)) | Out-File -FilePath $LogFileLocation -append
+}
+
+# Add Octopus folder to add symbolic links
+
+New-Item -ItemType directory -Path C:\Octopus
+
+# Add the Symbolic Links. Do this before installing Octopus.
+
+New-Item -ItemType SymbolicLink -Path "C:\Octopus\TaskLogs" -Target "\\$storageName.file.core.windows.net\$storageShare\$storageDirectory\TaskLogs"
+New-Item -ItemType SymbolicLink -Path "C:\Octopus\Artifacts" -Target "\\$storageName.file.core.windows.net\$storageShare\$storageDirectory\Artifacts"
+New-Item -ItemType SymbolicLink -Path "C:\Octopus\Packages" -Target "\\$storageName.file.core.windows.net\$storageShare\$storageDirectory\Packages"
 
 
 # Install Octopus
