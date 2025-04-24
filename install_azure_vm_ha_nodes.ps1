@@ -12,6 +12,7 @@ $storagePass=$args[7]
 
 $LicenseKey = $LicenseKey.replace('|', '"')
 
+$storageDirectory = "octoha"
 $LogFileLocation = "C:\log.txt"
 
 # Log Args to File
